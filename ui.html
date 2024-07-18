@@ -1,0 +1,212 @@
+<style>
+  body {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    padding: 0px 0px 0px 0px;
+    margin: 0;
+    background: linear-gradient(0deg, #f7f7f7 50%, #fcfcfc 50%);
+    background-size: 0.5% 0.5%;
+  }
+  p {
+    font-size: 0.7em;
+  }
+  h4 {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    padding: 2px 4px;
+    margin: 16px 0px 6px 0px;
+    background-color: #ffffff;
+    width: 100%;
+    font-weight: 600;
+  }
+  textarea {
+    font-family: Georgia, "Times New Roman", Times, serif;
+  }
+  button,
+  input {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-weight: 500;
+    font-size: 8pt;
+  }
+  label {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 0.8em;
+    position: relative;
+    top: -2px;
+    left: -4px;
+  }
+</style>
+
+<h4 style="margin-top: 0px">Import Vars</h4>
+<!-- add a label to the input -->
+<input type="checkbox" id="checkbox-clear" checked />
+<label for="checkbox-clear">Clear existing vars</label>
+<p></p>
+<input type="file" id="import-file" />
+<h4>Export Vars</h4>
+<textarea
+  id="variable-data"
+  style="border: none; background: #f7f7f7; width: 100%; height: 150px; resize: none; font-size: 0.7em"
+  spellcheck="false"
+  readonly
+></textarea>
+<p></p>
+<button id="show-json">Show JSON</button>
+<button id="save-json">Save JSON</button>
+<p></p>
+<button id="show-css">Show CSS</button>
+<button id="save-css">Save CSS</button>
+<h4>Modify Entity Names</h4>
+<p id="findreplace-info">Find & Replace in Variable Entities<br /></p>
+<input type="checkbox" id="checkbox-fr-vars" />
+<label for="checkbox-fr-vars">Vars</label>
+<input type="checkbox" id="checkbox-fr-collections" />
+<label for="checkbox-fr-collections">Collections</label>
+<input type="checkbox" id="checkbox-fr-modes" " />
+<label for="checkbox-fr-modes">Modes</label>
+<input type="checkbox" id="checkbox-fr-groups" disabled />
+<label for="checkbox-fr-groups">Groups</label>
+<input type="text" id="input-find" placeholder="Find" />
+<input type="text" id="input-replace" placeholder="Replace" />
+<p></p>
+<button id="replace-vars">Replace</button>
+<h4>Re-alias</h4>
+<p id="realias-info">Point variables to a new alias (currently all modes)</p>
+<input type="text" id="input-varname" placeholder="Variable name" />
+<input type="text" id="input-aliasname" placeholder="Alias name" />
+<button id="realias">Realias</button>
+<h4>Other</h4>
+<button id="clear-vars">Clear Document Vars</button>
+<!--<hr /><button id="close">Close</button>-->
+
+<!-- Add CSS style -->
+
+<script>
+  const post = (messageName, vars) => {
+    parent.postMessage({ pluginMessage: { type: messageName, ...vars } }, "*");
+  };
+
+  async function saveFile(figmaDocName, type, data) {
+    let mimeType = "";
+    let extension = "";
+    switch (type) {
+      case "json":
+        mimeType = "application/json";
+        extension = "json";
+        break;
+      case "css":
+        mimeType = "text/css";
+        extension = "css";
+        break;
+      default:
+        break;
+    }
+    const blob = new Blob([data], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    const currentDate = new Date();
+    const dateString = currentDate.toISOString().split("T")[0];
+    a.download = `${figmaDocName}-vars-${dateString}.${extension}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  const exportTextArea = document.getElementById("variable-data");
+  const rectanglesButton = document.getElementById("create-rectangles");
+  const closeButton = document.getElementById("close");
+
+  window.onmessage = (event) => {
+    const { type, data } = event.data.pluginMessage;
+    switch (type) {
+      case "populate-textarea":
+        exportTextArea.value = data;
+        break;
+      case "save-json":
+        saveFile(data.figmaDocName, "json", data.text);
+        break;
+      case "save-css":
+        saveFile(data.figmaDocName, "css", data.text);
+        break;
+      case "findreplace-info":
+        document.getElementById("findreplace-info").innerText = data;
+        break;
+      case "realias-info":
+        document.getElementById("realias-info").innerText = data;
+        break;
+      default:
+        break;
+    }
+  };
+
+  if (rectanglesButton) {
+    rectanglesButton.onclick = () => {
+      const textbox = document.getElementById("count");
+      const count = parseInt(textbox.value, 10);
+      parent.postMessage({ pluginMessage: { type: "create-rectangles", count } }, "*");
+    };
+  }
+
+  document.getElementById("import-file").addEventListener("click", (event) => {
+    event.target.value = "";
+  });
+  document.getElementById("import-file").addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    const checkbox = document.getElementById("checkbox-clear");
+    reader.onload = (event) => {
+      if (checkbox.checked) {
+        post("clear-vars");
+      }
+      const text = event.target.result;
+      post("import-json", { text });
+    };
+    reader.readAsText(file);
+  });
+
+  document.getElementById("show-json").onclick = () => post("show-json");
+  document.getElementById("save-json").onclick = () => post("save-json");
+  document.getElementById("clear-vars").onclick = () => post("clear-vars");
+  document.getElementById("show-css").onclick = () => post("show-css");
+  document.getElementById("save-css").onclick = () => post("save-css");
+
+  document.getElementById("replace-vars").onclick = () => {
+    if (!document.getElementById("input-find").value || !document.getElementById("input-replace").value) {
+      return;
+    }
+    const params = {
+      findString: document.getElementById("input-find").value,
+      replaceString: document.getElementById("input-replace").value,
+      inVars: document.getElementById("checkbox-fr-vars").checked,
+      inCollections: document.getElementById("checkbox-fr-collections").checked,
+      inModes: document.getElementById("checkbox-fr-modes").checked,
+      inGroups: document.getElementById("checkbox-fr-groups").checked,
+    };
+    post("replace-vars", params);
+  };
+
+  document.getElementById("realias").onclick = () => {
+    if (
+      !document.getElementById("input-varname").value ||
+      !document.getElementById("input-aliasname").value
+    ) {
+      console.log("Missing values");
+      return;
+    }
+    const params = {
+      varname: document.getElementById("input-varname").value,
+      alias: document.getElementById("input-aliasname").value,
+    };
+    post("realias", params);
+  };
+
+  if (closeButton) {
+    closeButton.onclick = () => post("close");
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    post("start");
+  });
+</script>
