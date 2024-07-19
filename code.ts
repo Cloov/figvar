@@ -337,7 +337,7 @@ async function realias(message: any): Promise<void> {
   const alias = message.alias;
   let aliasVariable = await findVariableByName(alias);
   if (!aliasVariable) {
-    figma.ui.postMessage({ type: "findreplace-info", data: `Could not find variable '${alias}'` });
+    figma.ui.postMessage({ type: "realias-info", data: `Could not find variable '${alias}'` });
     return;
   }
   const collections = await figma.variables.getLocalVariableCollectionsAsync();
