@@ -8,6 +8,8 @@
   }
   p {
     font-size: 0.7em;
+    padding-left: 4px;
+    padding-right: 20px;
   }
   h4 {
     font-family: Georgia, "Times New Roman", Times, serif;
@@ -69,7 +71,11 @@
 <p></p>
 <button id="replace-vars">Replace</button>
 <h4>Re-alias</h4>
-<p id="realias-info">Point variables to a new alias (currently all modes)</p>
+<p id="realias-info">
+  Point variables to a new alias (currently all modes). For variables/aliases in groups, use
+  <em><strong>groupname/variablename</strong></em
+  >, <em><strong>groupname/aliasvariablename</strong></em> etc.
+</p>
 <input type="text" id="input-varname" placeholder="Variable name" />
 <input type="text" id="input-aliasname" placeholder="Alias name" />
 <button id="realias">Realias</button>

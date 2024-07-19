@@ -5,7 +5,7 @@
 const options: ShowUIOptions = {
   title: "figvar",
   width: 380,
-  height: 660,
+  height: 670,
 };
 figma.showUI(__html__, options);
 
