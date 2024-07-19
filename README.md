@@ -13,4 +13,4 @@ Once the plugin is recognised by the desktop app, you should be able to run the 
 
 ##### Tips
 
-- In the Plugins > Development menu, use Show/Hide Console if something doesn't seem right, and we can investigate any errors
+- In the **Plugins > Development** menu, use **Show/Hide Console** if something doesn't seem right, and we can investigate any errors.
