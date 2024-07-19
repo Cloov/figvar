@@ -1,40 +1,16 @@
-Below are the steps to get your plugin running. You can also find instructions at:
+# figvar
 
-  https://www.figma.com/plugin-docs/plugin-quickstart-guide/
+### Setup
 
-This plugin template uses Typescript and NPM, two standard tools in creating JavaScript applications.
+1. Download repo: https://github.com/Cloov/figvar
+2. In the repo project, run `npm install` then `npm run build`.
+3. Ensure the Figma desktop app is open, and a relevant document is active
+4. From the Plugins menu in the menu bar, go to **Development > Import Plugin** From Manifest
+5. Navigate to and select **manifest.json** from the **figvar** directory
+6. Now, you should be able to run the plugin by going to **Plugins > Development > figvar**
 
-First, download Node.js which comes with NPM. This will allow you to install TypeScript and other
-libraries. You can find the download link here:
+Once the plugin is recognised by the desktop app, you should be able to run the plugin on any document if you re-run the plugin. It should always operate on the active document as the plugin has an instance per document.
 
-  https://nodejs.org/en/download/
+##### Tips
 
-Next, install TypeScript using the command:
-
-  npm install -g typescript
-
-Finally, in the directory of your plugin, get the latest type definitions for the plugin API by running:
-
-  npm install --save-dev @figma/plugin-typings
-
-If you are familiar with JavaScript, TypeScript will look very familiar. In fact, valid JavaScript code
-is already valid Typescript code.
-
-TypeScript adds type annotations to variables. This allows code editors such as Visual Studio Code
-to provide information about the Figma API while you are writing code, as well as help catch bugs
-you previously didn't notice.
-
-For more information, visit https://www.typescriptlang.org/
-
-Using TypeScript requires a compiler to convert TypeScript (code.ts) into JavaScript (code.js)
-for the browser to run.
-
-We recommend writing TypeScript code using Visual Studio code:
-
-1. Download Visual Studio Code if you haven't already: https://code.visualstudio.com/.
-2. Open this directory in Visual Studio Code.
-3. Compile TypeScript to JavaScript: Run the "Terminal > Run Build Task..." menu item,
-    then select "npm: watch". You will have to do this again every time
-    you reopen Visual Studio Code.
-
-That's it! Visual Studio Code will regenerate the JavaScript file every time you save.
+- In the Plugins > Development menu, use Show/Hide Console if something doesn't seem right, and we can investigate any errors
