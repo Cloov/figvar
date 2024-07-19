@@ -88,7 +88,8 @@ async function getVarsCssText(): Promise<string> {
         }
         if (resolvedValue != null) {
           let modeToken = modeCount > 1 ? `-${modeName.toLowerCase()}` : "";
-          data += `  --${collName}-${variable.name}${modeToken}: ${resolvedValue};\n`;
+          const safeVarName = variable.name.replace(/[\s/]/g, "-");
+          data += `  --${collName}-${safeVarName}${modeToken}: ${resolvedValue};\n`;
         }
       }
     });
@@ -97,16 +98,21 @@ async function getVarsCssText(): Promise<string> {
   return data;
 }
 
-function valueToString(variableValue: any, type: any): string | null {
+function valueToString(value: any, type: any): string | null {
+  const toHex = (rgb: number): string => {
+    let hex = Math.round(rgb * 255).toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+  };
   switch (type) {
     case "STRING":
-      return `"${variableValue}"`;
+      return `"${value}"`;
     case "FLOAT":
-      return `${variableValue}`;
+      return `${value}`;
     case "COLOR":
-      return `rgba(${variableValue.r}, ${variableValue.g}, ${variableValue.b}, ${variableValue.a})`;
+      if (value.a === 1) return `#${toHex(value.r)}${toHex(value.g)}${toHex(value.b)}`;
+      return `rgba(${value.r}, ${value.g}, ${value.b}, ${value.a})`;
     case "BOOLEAN":
-      return `${variableValue}`;
+      return `${value}`;
     default:
       return null;
   }
