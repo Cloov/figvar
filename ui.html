@@ -59,13 +59,11 @@
 <h4>Modify Entity Names</h4>
 <p id="findreplace-info">Find & Replace in Variable Entities<br /></p>
 <input type="checkbox" id="checkbox-fr-vars" />
-<label for="checkbox-fr-vars">Vars</label>
+<label for="checkbox-fr-vars">Vars & Groups</label>
 <input type="checkbox" id="checkbox-fr-collections" />
 <label for="checkbox-fr-collections">Collections</label>
 <input type="checkbox" id="checkbox-fr-modes" " />
 <label for="checkbox-fr-modes">Modes</label>
-<input type="checkbox" id="checkbox-fr-groups" disabled />
-<label for="checkbox-fr-groups">Groups</label>
 <input type="text" id="input-find" placeholder="Find" />
 <input type="text" id="input-replace" placeholder="Replace" />
 <p></p>
@@ -185,10 +183,9 @@
     const params = {
       findString: document.getElementById("input-find").value,
       replaceString: document.getElementById("input-replace").value,
-      inVars: document.getElementById("checkbox-fr-vars").checked,
+      inVarsAndGroups: document.getElementById("checkbox-fr-vars").checked,
       inCollections: document.getElementById("checkbox-fr-collections").checked,
       inModes: document.getElementById("checkbox-fr-modes").checked,
-      inGroups: document.getElementById("checkbox-fr-groups").checked,
     };
     post("replace-vars", params);
   };

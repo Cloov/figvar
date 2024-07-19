@@ -364,7 +364,7 @@ async function modifyNames(message: any): Promise<void> {
   const replaceString = message.replaceString;
   let numReplacements: number = 0;
 
-  if (message.inVars) {
+  if (message.inVarsAndGroups) {
     const varCollections = await figma.variables.getLocalVariableCollectionsAsync();
     for (let i = 0; i < varCollections.length; i++) {
       let collection = varCollections[i];
